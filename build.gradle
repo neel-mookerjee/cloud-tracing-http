@@ -1,0 +1,100 @@
+apply plugin: "java"
+apply plugin: "maven"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "spring-boot"
+apply plugin: "io.spring.dependency-management"
+
+
+ext {
+    artifact = 'cloud-tracing-http'
+    releaseVersion = version
+}
+
+task createPom << {
+
+    pom {
+        project {
+            groupId 'cloud'
+            artifactId artifact
+            version releaseVersion
+            inceptionYear '2016'
+        }
+    }.writeTo("$rootDir/repo/local/${artifact}-${version}.pom")
+}
+
+build.dependsOn createPom
+
+jar {
+    baseName = "cloud-tracing-http"
+}
+
+description = "Cloud Tracing for HTTP requests"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+buildscript {
+
+    ext {
+        springVersion = "4.2.5.RELEASE"
+        springBootVersion = "1.3.3.RELEASE"
+        logbackVersion = "1.1.3"
+        gradlePluginVersion = "0.5.6.RELEASE"
+        junitVersion = "4.11"
+
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:${gradlePluginVersion}")
+    }
+}
+
+dependencyManagement {
+    dependencies {
+        ext {
+            springVersion = "4.2.5.RELEASE"
+            springBootVersion = "1.3.3.RELEASE"
+            logbackVersion = "1.1.3"
+            junitVersion = "4.11"
+        }
+        dependency("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+        dependency("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+        dependency("org.springframework.boot:spring-boot-starter-clientcontext:${springBootVersion}")
+
+        dependency("org.springframework:spring-core:${springVersion}")
+        dependency("org.springframework:spring-web:${springVersion}")
+
+        dependency("ch.qos.logback:logback-classic:${logbackVersion}")
+
+        dependency("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+        dependency("org.springframework:spring-test:${springVersion}")
+        dependency("junit:junit:${junitVersion}")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+System.setProperty("org.gradle.color.failure", "RED")
+System.setProperty("org.gradle.color.progressstatus", "YELLOW")
+System.setProperty("org.gradle.color.success", "GREEN")
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    compile "org.springframework:spring-web:${springVersion}"
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testCompile "org.springframework:spring-test:${springVersion}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "com.fasterxml.jackson.core:jackson-databind:2.5.0"
+}
+

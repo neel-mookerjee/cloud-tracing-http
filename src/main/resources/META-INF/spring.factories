@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cloud.tracing.autoconfigure.rest.TraceAutoConfiguration,\
+  cloud.tracing.autoconfigure.rest.TraceRestHttpClientAutoConfiguration,\
+  cloud.tracing.autoconfigure.rest.TraceWebRequestAutoConfiguration
